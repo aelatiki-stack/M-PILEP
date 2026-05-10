@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Boîte à Merveilles — Ahmed Sefrioui</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Cinzel:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --indigo: #0d0e2b;
+    --deep-blue: #101535;
+    --terracotta: #8b3a2a;
+    --amber: #c98730;
+    --gold: #e8c078;
+    --sand: #d4b483;
+    --smoke: rgba(220,200,170,0.12);
+    --white: #f5ede0;
+    --muted: rgba(245,237,224,0.55);
+  }
+
+  body {
+    background: #060713;
+    color: var(--white);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    height: 100vh;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  /* ── STAGE ── */
+  #stage {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* ── SCENES ── */
+  .scene {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 1.4s ease;
+    pointer-events: none;
+  }
+  .scene.active { opacity: 1; pointer-events: auto; }
+  .scene.exit   { opacity: 0; }
+
+  /* ── BACKGROUNDS ── */
+  .bg { position: absolute; inset: 0; }
+
+  /* Stars canvas */
+  #stars-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Zellige pattern overlay */
+  .zellige {
+    position: absolute;
+    inset: 0;
+    opacity: 0.05;
+    background-image:
+      repeating-conic-gradient(#e8c078 0deg 10deg, transparent 10deg 20deg),
+      repeating-conic-gradient(#e8c078 0deg 10deg, transparent 10deg 20deg);
+    background-size: 60px 60px;
+    background-position: 0 0, 30px 30px;
+  }
+
+  /* Incense smoke */
+  .smoke-container {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    height: 60%;
+    pointer-events: none;
+  }
+  .smoke-wisp {
+    position: absolute;
+    bottom: 0;
+    border-radius: 50% 50% 20% 20%;
+    opacity: 0;
+    animation: riseSmoke 6s ease-in infinite;
+    background: radial-gradient(ellipse, rgba(220,190,140,0.25) 0%, transparent 70%);
+  }
+  .smoke-wisp:nth-child(1) { left:30%; width:60px; height:120px; animation-delay:0s; }
+  .smoke-wisp:nth-child(2) { left:45%; width:80px; height:160px; animation-delay:1.5s; }
+  .smoke-wisp:nth-child(3) { left:20%; width:50px; height:100px; animation-delay:3s; }
+  .smoke-wisp:nth-child(4) { left:55%; width:70px; height:140px; animation-delay:4.5s; }
+
+  @keyframes riseSmoke {
+    0%   { opacity:0; transform: translateY(0) scaleX(1); }
+    20%  { opacity:0.6; }
+    80%  { opacity:0.2; }
+    100% { opacity:0; transform: translateY(-220px) scaleX(2.5); }
+  }
+
+  /* Lantern flicker */
+  .lantern {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #f5c842;
+    box-shadow: 0 0 18px 8px rgba(245,200,66,0.5), 0 0 40px 20px rgba(200,140,30,0.2);
+    animation: flicker 2.3s ease-in-out infinite;
+  }
+  @keyframes flicker {
+    0%,100% { opacity:1; transform:scale(1); }
+    30%      { opacity:0.7; transform:scale(0.85); }
+    60%      { opacity:0.9; transform:scale(1.1); }
+    80%      { opacity:0.6; transform:scale(0.9); }
+  }
+
+  /* Robe sway */
+  .robe {
+    position: absolute;
+    bottom: 60px;
+    width: 40px;
+    height: 120px;
+    border-radius: 40% 40% 10% 10%;
+    transform-origin: top center;
+    animation: sway 3s ease-in-out infinite;
+  }
+  @keyframes sway {
+    0%,100% { transform: rotate(-8deg); }
+    50%      { transform: rotate(8deg); }
+  }
+
+  /* Silhouette buildings */
+  .cityline {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 35%;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  /* Bird trap */
+  .trap {
+    position: absolute;
+    bottom: 120px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 40px;
+    border: 2px solid rgba(200,160,90,0.6);
+    border-radius: 4px 4px 0 0;
+    border-bottom: none;
+  }
+  .trap::after {
+    content:'';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 30px;
+    background: rgba(200,160,90,0.6);
+  }
+
+  /* Sparrow */
+  .sparrow {
+    position: absolute;
+    font-size: 22px;
+    animation: flyAway 8s ease-in-out infinite;
+  }
+  @keyframes flyAway {
+    0%   { transform: translate(0,0) rotate(0deg); opacity:1; }
+    40%  { transform: translate(80px,-30px) rotate(-15deg); opacity:1; }
+    60%  { transform: translate(180px,-80px) rotate(-20deg); opacity:0.5; }
+    100% { transform: translate(280px,-150px) rotate(-25deg); opacity:0; }
+  }
+
+  /* Patio tiles */
+  .patio {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 260px;
+    height: 100px;
+    display: grid;
+    grid-template-columns: repeat(6,1fr);
+    gap: 3px;
+    opacity: 0.3;
+  }
+  .tile {
+    background: var(--sand);
+    border-radius: 2px;
+  }
+  .tile:nth-child(odd) { background: rgba(180,120,60,0.5); }
+
+  /* ── TEXT LAYER ── */
+  .text-layer {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 0 12%;
+    max-width: 900px;
+  }
+
+  .label {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    opacity: 0.8;
+  }
+
+  .title {
+    font-size: clamp(2rem, 5vw, 3.8rem);
+    font-weight: 300;
+    line-height: 1.15;
+    color: var(--white);
+    margin-bottom: 22px;
+    font-style: italic;
+  }
+
+  .author {
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    letter-spacing: 3px;
+    color: var(--gold);
+    opacity: 0.7;
+  }
+
+  .quote {
+    font-size: clamp(1.05rem, 2.2vw, 1.4rem);
+    font-weight: 300;
+    line-height: 1.85;
+    color: var(--white);
+    opacity: 0.92;
+  }
+
+  .highlight {
+    color: var(--gold);
+    font-style: italic;
+  }
+
+  .scene-label {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 5px;
+    color: var(--gold);
+    text-transform: uppercase;
+    opacity: 0.5;
+    margin-bottom: 40px;
+  }
+
+  .divider {
+    width: 60px;
+    height: 1px;
+    background: var(--gold);
+    margin: 28px auto;
+    opacity: 0.4;
+  }
+
+  /* ── CONTROLS ── */
+  #controls {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    z-index: 100;
+    background: rgba(6,7,19,0.6);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(232,192,120,0.15);
+    border-radius: 40px;
+    padding: 10px 24px;
+  }
+
+  .ctrl-btn {
+    background: none;
+    border: none;
+    color: rgba(245,237,224,0.7);
+    cursor: pointer;
+    font-size: 18px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: color 0.2s, opacity 0.2s;
+  }
+  .ctrl-btn:hover { color: var(--gold); }
+  .ctrl-btn:disabled { opacity: 0.2; cursor: default; }
+
+  #dots {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: rgba(232,192,120,0.3);
+    cursor: pointer;
+    transition: background 0.3s, transform 0.3s;
+  }
+  .dot.active { background: var(--gold); transform: scale(1.4); }
+
+  #progress {
+    position: fixed;
+    top: 0; left: 0;
+    height: 2px;
+    background: var(--gold);
+    opacity: 0.6;
+    transition: width 0.5s ease;
+    z-index: 200;
+  }
+
+  /* ── Scene-specific backgrounds ── */
+  #s0 { background: #060713; }
+  #s1 { background: #08091a; }
+  #s2 { background: #0e0b06; }
+  #s3 { background: #0a0608; }
+  #s4 { background: #12040a; }
+  #s5 { background: #04080e; }
+  #s6 { background: #080b06; }
+
+  /* Moon */
+  .moon {
+    position: absolute;
+    top: 12%;
+    right: 18%;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: #f5e8c0;
+    box-shadow: 0 0 30px 10px rgba(245,232,192,0.15);
+    opacity: 0.85;
+  }
+
+  /* Dawn gradient bar */
+  .dawn-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: linear-gradient(to top, rgba(100,60,20,0.5) 0%, transparent 100%);
+  }
+
+  /* Colored robe shapes */
+  .gnaoua-scene {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 30px;
+    padding-bottom: 40px;
+  }
+
+  /* ── TITLE SCENE specific ── */
+  #s0 .zellige { opacity: 0.03; }
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+
+  <!-- SCENE 0 — TITRE -->
+  <div class="scene active" id="s0">
+    <canvas id="stars-canvas"></canvas>
+    <div class="zellige"></div>
+    <div class="moon" style="opacity:0.7; width:90px; height:90px; top:10%; right:15%;"></div>
+    <div class="text-layer">
+      <div class="label">Ahmed Sefrioui</div>
+      <h1 class="title" style="font-size:clamp(2.8rem,7vw,5.5rem); margin-bottom:16px;">La Boîte<br>à Merveilles</h1>
+      <div class="divider"></div>
+      <p class="author" style="letter-spacing:5px;">Roman · 1954 · Maroc</p>
+    </div>
+    <div style="position:absolute; bottom:100px; font-size:11px; letter-spacing:3px; color:rgba(232,192,120,0.4); font-family:'Cinzel',serif;">Appuyez sur ▶ pour commencer</div>
+  </div>
+
+  <!-- SCENE 1 — LE SOIR -->
+  <div class="scene" id="s1">
+    <canvas class="bg" style="position:absolute;inset:0;width:100%;height:100%;"></canvas>
+    <div class="moon"></div>
+    <!-- City silhouette SVG -->
+    <svg class="cityline" viewBox="0 0 1200 280" preserveAspectRatio="xMidYMax meet" style="position:absolute;bottom:0;opacity:0.85;">
+      <g fill="#0b0c22">
+        <!-- Minaret left -->
+        <rect x="50" y="80" width="30" height="200"/>
+        <rect x="55" y="60" width="20" height="30"/>
+        <polygon points="65,40 55,70 75,70"/>
+        <rect x="48" y="110" width="5" height="40"/>
+        <rect x="77" y="110" width="5" height="40"/>
+        <!-- House cluster left -->
+        <rect x="100" y="150" width="70" height="130"/>
+        <rect x="120" y="130" width="30" height="30"/>
+        <rect x="90" y="170" width="50" height="110"/>
+        <!-- Dome -->
+        <ellipse cx="250" cy="100" rx="45" ry="35"/>
+        <rect x="215" y="95" width="70" height="185"/>
+        <!-- Middle buildings -->
+        <rect x="300" y="130" width="80" height="150"/>
+        <rect x="330" y="110" width="20" height="30"/>
+        <rect x="380" y="160" width="60" height="120"/>
+        <rect x="440" y="140" width="100" height="140"/>
+        <rect x="460" y="120" width="60" height="30"/>
+        <!-- Minaret centre -->
+        <rect x="580" y="60" width="25" height="220"/>
+        <rect x="584" y="40" width="17" height="28"/>
+        <polygon points="592,18 584,42 600,42"/>
+        <rect x="578" y="90" width="4" height="50"/>
+        <rect x="605" y="90" width="4" height="50"/>
+        <!-- Right cluster -->
+        <rect x="650" y="160" width="90" height="120"/>
+        <rect x="680" y="140" width="30" height="30"/>
+        <rect x="760" y="130" width="70" height="150"/>
+        <rect x="775" y="100" width="40" height="40"/>
+        <rect x="850" y="170" width="80" height="110"/>
+        <!-- Right minaret -->
+        <rect x="960" y="90" width="22" height="190"/>
+        <rect x="963" y="72" width="16" height="26"/>
+        <polygon points="971,50 963,74 979,74"/>
+        <!-- Far right -->
+        <rect x="1000" y="150" width="100" height="130"/>
+        <rect x="1030" y="130" width="40" height="30"/>
+        <rect x="1110" y="160" width="90" height="120"/>
+      </g>
+      <!-- Windows (tiny amber dots) -->
+      <g fill="rgba(232,192,120,0.35)" opacity="0.6">
+        <circle cx="130" cy="175" r="3"/><circle cx="150" cy="175" r="3"/>
+        <circle cx="130" cy="200" r="3"/><circle cx="110" cy="195" r="3"/>
+        <circle cx="325" cy="160" r="3"/><circle cx="345" cy="160" r="3"/>
+        <circle cx="325" cy="185" r="3"/><circle cx="345" cy="185" r="3"/>
+        <circle cx="460" cy="170" r="3"/><circle cx="480" cy="170" r="3"/>
+        <circle cx="500" cy="170" r="3"/>
+        <circle cx="670" cy="185" r="3"/><circle cx="700" cy="185" r="3"/>
+        <circle cx="790" cy="165" r="3"/><circle cx="810" cy="165" r="3"/>
+        <circle cx="860" cy="195" r="3"/><circle cx="890" cy="195" r="3"/>
+      </g>
+    </svg>
+    <div class="text-layer">
+      <div class="scene-label">Scène I</div>
+      <p class="quote">
+        <span class="highlight">Le soir, quand tous dorment,</span><br>
+        les riches dans leurs chaudes couvertures,<br>
+        les pauvres sur les marches des boutiques…<br><br>
+        <em style="opacity:0.7;">moi, je ne dors pas.</em>
+      </p>
+      <div class="divider"></div>
+      <p class="quote" style="font-size:1rem; opacity:0.6;">Je songe à ma solitude<br>et j'en sens tout le poids.</p>
+    </div>
+  </div>
+
+  <!-- SCENE 2 — LE MOINEAU -->
+  <div class="scene" id="s2">
+    <div class="bg" style="background:#0d0b08;"></div>
+    <!-- Alley walls -->
+    <div style="position:absolute;inset:0; background: repeating-linear-gradient(90deg, rgba(60,40,20,0.08) 0, rgba(60,40,20,0.08) 1px, transparent 1px, transparent 40px);"></div>
+    <div style="position:absolute;left:0;top:0;bottom:0;width:22%; background:rgba(40,25,10,0.7); border-right:1px solid rgba(120,80,40,0.2);"></div>
+    <div style="position:absolute;right:0;top:0;bottom:0;width:22%; background:rgba(40,25,10,0.7); border-left:1px solid rgba(120,80,40,0.2);"></div>
+    <!-- Ground -->
+    <div style="position:absolute;bottom:0;left:0;right:0;height:90px; background:rgba(70,50,25,0.5);"></div>
+    <!-- Trap -->
+    <div class="trap"></div>
+    <!-- Sparrow -->
+    <div class="sparrow" style="bottom:140px; left:calc(50% - 20px);">🐦</div>
+    <!-- Small boy silhouette -->
+    <svg style="position:absolute;bottom:88px;left:50%;transform:translateX(-80px); opacity:0.75;" width="22" height="60" viewBox="0 0 22 60">
+      <ellipse cx="11" cy="8" rx="7" ry="8" fill="#2a1a0a"/>
+      <rect x="7" y="14" width="8" height="28" rx="3" fill="#2a1a0a"/>
+      <rect x="3" y="17" width="6" height="2" rx="1" fill="#2a1a0a"/>
+      <rect x="13" y="17" width="6" height="2" rx="1" fill="#2a1a0a"/>
+      <rect x="6" y="40" width="4" height="18" rx="2" fill="#2a1a0a"/>
+      <rect x="12" y="40" width="4" height="18" rx="2" fill="#2a1a0a"/>
+    </svg>
+    <!-- Lantern on wall -->
+    <div class="lantern" style="top:35%; left:25%;"></div>
+    <div class="text-layer">
+      <div class="scene-label">Scène II — L'impasse</div>
+      <p class="quote">
+        Au fond d'une impasse que le soleil ne visite jamais,<br>
+        un petit garçon de six ans dresse<br>
+        <span class="highlight">un piège pour attraper un moineau.</span>
+      </p>
+      <div class="divider"></div>
+      <p class="quote" style="font-size:1rem; opacity:0.65;">Il ne le mangera pas, il ne le martyrisera pas.<br>Il veut en faire <em>son compagnon.</em></p>
+    </div>
+  </div>
+
+  <!-- SCENE 3 — DAR CHOUAFA -->
+  <div class="scene" id="s3">
+    <div class="bg" style="background:#0a0808;"></div>
+    <div class="zellige"></div>
+    <!-- Arch shape -->
+    <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:0.25;" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid meet">
+      <g stroke="rgba(200,160,80,0.6)" fill="none" stroke-width="1">
+        <!-- Large arch -->
+        <path d="M300,580 L300,200 Q400,80 500,200 L500,580"/>
+        <!-- Inner arch -->
+        <path d="M320,580 L320,215 Q400,110 480,215 L480,580"/>
+        <!-- Muqarnas decoration -->
+        <path d="M310,200 Q330,170 350,185 Q370,160 390,175 Q410,155 430,172 Q450,160 470,180 Q490,165 500,200"/>
+        <!-- Frame -->
+        <rect x="295" y="195" width="210" height="10"/>
+        <!-- Zouak patterns -->
+        <line x1="300" y1="300" x2="500" y2="300"/>
+        <line x1="300" y1="400" x2="500" y2="400"/>
+        <line x1="300" y1="500" x2="500" y2="500"/>
+        <circle cx="400" cy="300" r="4" fill="rgba(200,160,80,0.4)"/>
+        <circle cx="400" cy="400" r="4" fill="rgba(200,160,80,0.4)"/>
+      </g>
+    </svg>
+    <!-- Lanterns -->
+    <div class="lantern" style="top:20%; left:30%;"></div>
+    <div class="lantern" style="top:20%; right:30%; animation-delay:1.1s;"></div>
+    <div class="text-layer">
+      <div class="scene-label">Scène III — La maison</div>
+      <p class="quote">
+        Nous habitions <span class="highlight">Dar Chouafa</span>,<br>
+        la maison de la voyante.
+      </p>
+      <div class="divider"></div>
+      <p class="quote" style="font-size:1.05rem; opacity:0.72;">
+        Des quartiers les plus éloignés, des femmes<br>
+        de toutes les conditions venaient la consulter.<br><br>
+        <em style="opacity:0.6;">Elle était voyante et quelque peu sorcière.</em>
+      </p>
+    </div>
+  </div>
+
+  <!-- SCENE 4 — LES GNAOUAS -->
+  <div class="scene" id="s4">
+    <div class="bg" style="background:#100512;"></div>
+    <!-- Smoke -->
+    <div class="smoke-container">
+      <div class="smoke-wisp"></div>
+      <div class="smoke-wisp"></div>
+      <div class="smoke-wisp"></div>
+      <div class="smoke-wisp"></div>
+    </div>
+    <!-- Dancing robes -->
+    <div class="gnaoua-scene">
+      <div class="robe" style="background:#1a4a7a; animation-delay:0s; left:calc(50% - 180px);"></div>
+      <div class="robe" style="background:#8b0a0a; animation-delay:0.8s; left:calc(50% - 80px);"></div>
+      <div class="robe" style="background:#c47800; animation-delay:1.6s; left:calc(50% + 20px);"></div>
+      <div class="robe" style="background:#1a4a7a; animation-delay:2.4s; left:calc(50% + 120px);"></div>
+    </div>
+    <!-- Flame at bottom -->
+    <div style="position:absolute;bottom:50px;left:50%;transform:translateX(-50%);width:12px;height:20px;background:#f5c842;border-radius:50% 50% 30% 30%;animation:flicker 1.5s ease-in-out infinite;box-shadow:0 0 20px 8px rgba(245,200,66,0.3);"></div>
+    <div class="text-layer">
+      <div class="scene-label">Scène IV — Les Gnaouas</div>
+      <p class="quote">
+        <span class="highlight">Des nuages de benjoin</span><br>
+        emplissaient la maison.<br><br>
+        Les robes étaient tantôt <em style="color:#6aa3d4;">bleu-ciel</em>,<br>
+        tantôt <em style="color:#c44a3a;">rouge sang</em>,<br>
+        parfois d'un <em style="color:#e8a030;">jaune flamboyant</em>.
+      </p>
+      <div class="divider"></div>
+      <p class="quote" style="font-size:1rem; opacity:0.6;">J'entendais leurs rires<br>comme par les nuits d'orage.</p>
+    </div>
+  </div>
+
+  <!-- SCENE 5 — LES JNOUNS -->
+  <div class="scene" id="s5">
+    <div class="bg" style="background:#040810;"></div>
+    <canvas id="stars2" style="position:absolute;inset:0;width:100%;height:100%;opacity:0.5;"></canvas>
+    <!-- Eerie shadows -->
+    <div style="position:absolute;inset:0; background:radial-gradient(ellipse at 30% 60%, rgba(50,0,80,0.3) 0%, transparent 60%), radial-gradient(ellipse at 70% 40%, rgba(0,30,80,0.2) 0%, transparent 50%);"></div>
+    <div class="text-layer">
+      <div class="scene-label">Scène V — Les démons</div>
+      <p class="quote">
+        Autour de moi rôdaient les <span class="highlight">jnouns</span>,<br>
+        les démons noirs évoqués par la sorcière.
+      </p>
+      <div class="divider"></div>
+      <p class="quote" style="font-size:1.05rem; opacity:0.72; line-height:2;">
+        Je sentais les jnouns me frôler<br>
+        de leurs doigts brûlants.<br><br>
+        <em style="opacity:0.5;">Mes index dans les oreilles,<br>je criais les versets de ma planchette<br>avec un accent de désespoir.</em>
+      </p>
+    </div>
+  </div>
+
+  <!-- SCENE 6 — LE MSID -->
+  <div class="scene" id="s6">
+    <div class="bg" style="background:#060b05;"></div>
+    <!-- Dawn light -->
+    <div style="position:absolute;bottom:0;left:0;right:0;height:45%; background:linear-gradient(to top, rgba(80,55,15,0.35) 0%, transparent 100%);"></div>
+    <!-- Dawn sun glow -->
+    <div style="position:absolute;bottom:30%;left:50%;transform:translateX(-50%);width:120px;height:50px;background:rgba(200,140,40,0.12);border-radius:50%;filter:blur(20px);"></div>
+    <!-- Minaret silhouette -->
+    <svg style="position:absolute;bottom:0;left:50%;transform:translateX(-50%);" width="120" height="300" viewBox="0 0 120 300">
+      <rect x="48" y="30" width="24" height="270" fill="#050b03"/>
+      <rect x="42" y="0" width="36" height="40" fill="#050b03"/>
+      <polygon points="60,0 42,15 78,15" fill="#050b03"/>
+      <rect x="32" y="80" width="8" height="30" fill="#050b03"/>
+      <rect x="80" y="80" width="8" height="30" fill="#050b03"/>
+      <rect x="28" y="160" width="8" height="30" fill="#050b03"/>
+      <rect x="84" y="160" width="8" height="30" fill="#050b03"/>
+      <!-- Crescent -->
+      <path d="M58,0 Q54,-8 60,-10 Q52,-14 56,-6" stroke="rgba(232,192,120,0.6)" fill="none" stroke-width="1.5"/>
+    </svg>
+    <!-- Patio tiles -->
+    <div class="patio"></div>
+    <div class="patio" style="display:none;"></div>
+    <script>
+      const patio = document.querySelector('.patio');
+      if(patio) for(let i=0;i<24;i++){const t=document.createElement('div');t.className='tile';patio.appendChild(t);}
+    </script>
+    <div class="text-layer">
+      <div class="scene-label">Scène VI — L'aurore</div>
+      <p class="quote">
+        Je me levais de bonne heure<br>
+        pour aller au <span class="highlight">Msid</span>,<br>
+        l'école Coranique.
+      </p>
+      <div class="divider"></div>
+      <p class="quote" style="font-size:1rem; opacity:0.65; line-height:2;">
+        Les bruits de la nuit roulaient<br>
+        encore dans ma tête.<br><br>
+        <em style="opacity:0.5;">L'odeur du benjoin et de l'encens m'enivrait.</em>
+      </p>
+    </div>
+  </div>
+
+  <!-- SCENE 7 — FIN -->
+  <div class="scene" id="s7">
+    <canvas style="position:absolute;inset:0;width:100%;height:100%;" id="stars3"></canvas>
+    <div class="moon" style="top:15%;left:45%;transform:translateX(-50%); width:60px;height:60px;opacity:0.5;"></div>
+    <div class="zellige" style="opacity:0.04;"></div>
+    <div class="text-layer">
+      <div class="label" style="margin-bottom:40px;">Ahmed Sefrioui</div>
+      <h2 class="title" style="font-size:clamp(1.5rem,4vw,2.8rem); font-style:normal; letter-spacing:2px;">La Boîte à Merveilles</h2>
+      <div class="divider"></div>
+      <p class="quote" style="font-size:1rem; opacity:0.55; line-height:2.2;">
+        Premier roman marocain francophone · 1954<br>
+        Prix de l'Afrique équatoriale française
+      </p>
+      <div style="height:40px;"></div>
+      <p style="font-size:0.9rem; font-style:italic; opacity:0.35; font-family:'Cormorant Garamond',serif; letter-spacing:1px;">
+        « Ma solitude ne date pas d'hier. »
+      </p>
+    </div>
+  </div>
+
+</div><!-- /stage -->
+
+<!-- Controls -->
+<div id="controls">
+  <button class="ctrl-btn" id="btn-prev" title="Précédent" disabled>&#9664;</button>
+  <button class="ctrl-btn" id="btn-play" title="Lecture auto">&#9654;</button>
+  <div id="dots"></div>
+  <button class="ctrl-btn" id="btn-next" title="Suivant">&#9654;&#9654;</button>
+</div>
+
+<script>
+const scenes = document.querySelectorAll('.scene');
+const total = scenes.length;
+let current = 0;
+let playing = false;
+let timer = null;
+const DURATION = 7000;
+
+// Progress bar
+const progress = document.getElementById('progress');
+
+// Dots
+const dotsContainer = document.getElementById('dots');
+for(let i=0;i<total;i++){
+  const d = document.createElement('div');
+  d.className='dot'+(i===0?' active':'');
+  d.onclick=()=>goTo(i);
+  dotsContainer.appendChild(d);
+}
+
+function updateProgress(idx){
+  progress.style.width = ((idx/(total-1))*100)+'%';
+}
+
+function goTo(idx){
+  if(idx<0||idx>=total) return;
+  scenes[current].classList.remove('active');
+  scenes[current].classList.add('exit');
+  const prev = current;
+  setTimeout(()=>{ scenes[prev].classList.remove('exit'); },1500);
+  current = idx;
+  scenes[current].classList.add('active');
+  document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===current));
+  document.getElementById('btn-prev').disabled = current===0;
+  document.getElementById('btn-next').disabled = current===total-1;
+  updateProgress(current);
+}
+
+function next(){ if(current<total-1) goTo(current+1); else stopPlay(); }
+function prev(){ goTo(current-1); }
+
+const btnPlay = document.getElementById('btn-play');
+const btnPrev = document.getElementById('btn-prev');
+const btnNext = document.getElementById('btn-next');
+
+function startPlay(){
+  playing=true;
+  btnPlay.innerHTML='&#9646;&#9646;';
+  timer=setInterval(()=>{
+    if(current<total-1) next();
+    else stopPlay();
+  }, DURATION);
+}
+function stopPlay(){
+  playing=false;
+  btnPlay.innerHTML='&#9654;';
+  clearInterval(timer);
+}
+
+btnPlay.onclick=()=>{ if(playing) stopPlay(); else startPlay(); };
+btnPrev.onclick=()=>{ stopPlay(); prev(); };
+btnNext.onclick=()=>{ stopPlay(); next(); };
+
+// Keyboard
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '){ stopPlay(); next(); }
+  if(e.key==='ArrowLeft'){ stopPlay(); prev(); }
+  if(e.key==='p'||e.key==='P'){ if(playing) stopPlay(); else startPlay(); }
+});
+
+// Stars
+function drawStars(canvasEl, count, seed){
+  if(!canvasEl) return;
+  const ctx = canvasEl.getContext('2d');
+  canvasEl.width = window.innerWidth;
+  canvasEl.height = window.innerHeight;
+  ctx.clearRect(0,0,canvasEl.width,canvasEl.height);
+  let r = seed||42;
+  function rand(){ r=(r*16807+0)%2147483647; return r/2147483647; }
+  for(let i=0;i<(count||200);i++){
+    const x=rand()*canvasEl.width;
+    const y=rand()*canvasEl.height*0.85;
+    const s=rand()*1.5+0.2;
+    const a=rand()*0.7+0.2;
+    ctx.beginPath();
+    ctx.arc(x,y,s,0,Math.PI*2);
+    ctx.fillStyle=`rgba(240,230,200,${a})`;
+    ctx.fill();
+  }
+}
+
+drawStars(document.getElementById('stars-canvas'),250,42);
+drawStars(document.getElementById('stars2'),180,99);
+drawStars(document.getElementById('stars3'),200,7);
+
+window.addEventListener('resize',()=>{
+  drawStars(document.getElementById('stars-canvas'),250,42);
+  drawStars(document.getElementById('stars2'),180,99);
+  drawStars(document.getElementById('stars3'),200,7);
+});
+
+// Tile grid
+document.querySelectorAll('.patio').forEach(p=>{
+  if(p.children.length===0){
+    for(let i=0;i<24;i++){const t=document.createElement('div');t.className='tile';p.appendChild(t);}
+  }
+});
+
+updateProgress(0);
+</script>
+</body>
+</html>

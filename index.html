@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>La Boîte à Merveilles - Chapitre 1</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes zoom {
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.1);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+  </style>
+
+</head>
+
+<body class="bg-[#f5efe6] font-sans text-[#1f3b73]">
+
+  <!-- Navbar -->
+  <header class="bg-[#1f4f99] text-white shadow-lg fixed top-0 left-0 w-full z-50">
+    <div class="max-w-7xl mx-auto flex justify-between items-center px-6 py-2">
+
+      <div class="flex items-center gap-3">
+        <div class="bg-white p-2 rounded-xl text-2xl shadow-md"><img src="images/logo 1.png" alt="logo" width="140px">
+        </div>
+        <h1 class="text-2xl font-bold"></h1>
+      </div>
+
+      <nav class="hidden md:flex gap-8 text-lg font-medium">
+        <a href="index.html" class="hover:text-yellow-300 transition">Accueil</a>
+        <a href="cours.html" class="hover:text-yellow-300 transition">Cours</a>
+        <a href="Q&R.html" class="hover:text-yellow-300 transition">Q&R</a>
+        <a href="slide.html" class="hover:text-yellow-300 transition">Video</a>
+        <a href="chatbot.html" class="hover:text-yellow-300 transition">ChatBot</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section id="accueil" class="relative h-screen flex items-center justify-center text-center overflow-hidden">
+
+    <img src="images/2.jpg" class="absolute inset-0 w-full h-full object-cover animate-[zoom_20s_ease-in-out_infinite]"
+      alt="Ville de Fès" />
+
+    <div class="absolute inset-0 bg-black/40"></div>
+
+    <div class="relative z-10 text-white px-4">
+      <h2 class="text-5xl md:text-7xl font-bold italic drop-shadow-xl">
+        La Boîte à Merveilles
+      </h2>
+
+      <p class="mt-6 bg-[#1f4f99cc] inline-block px-8 py-4 rounded-xl text-2xl md:text-3xl font-semibold shadow-2xl">
+        « Intégration des TICE en cours de langue »<br>
+        En utilisent les outils numériques (quiz, vidéo, plateforme)
+
+      </p>
+    </div>
+  </section>
+
+  <!-- Introduction -->
+  <section class="max-w-6xl mx-auto px-6 py-20">
+
+    <div class="grid md:grid-cols-3 gap-10 items-center">
+
+      <div class="flex justify-center">
+        <img src="images/Ahmed_Sefrioui.jpg" alt="Ahmed Sefrioui"
+          class="w-60 h-60 rounded-full object-cover border-4 border-white shadow-2xl" />
+      </div>
+
+      <div class="md:col-span-2">
+
+        <h3 class="text-4xl font-bold border-b-4 border-[#1f4f99] inline-block pb-2 mb-6">
+          Ahmed Sefrioui
+        </h3>
+
+        <p class="text-xl leading-10 text-gray-700">
+          <span class="font-bold text-[#1f4f99]">La Boîte à Merveilles</span>
+          est un roman autobiographique écrit par Ahmed Sefrioui.
+          Cette œuvre raconte les souvenirs d’enfance du narrateur dans la médina de Fès.
+        </p>
+
+        <p class="text-xl leading-10 text-gray-700 mt-4">
+          Le chapitre 1 présente la vie quotidienne du jeune narrateur,
+          son école coranique, sa famille et son monde imaginaire.
+        </p>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Cards -->
+  <section id="chapitre" class="max-w-6xl mx-auto px-6 pb-20">
+
+    <h2 class="text-4xl font-bold text-center mb-14">
+      Chapitre 1
+    </h2>
+
+    <div class="grid md:grid-cols-3 gap-8">
+
+      <!-- Résumé -->
+      <div class="bg-white p-8 rounded-3xl shadow-xl hover:scale-105 transition duration-300">
+
+        <div class="text-6xl text-center mb-6">📖</div>
+
+        <h3 class="text-2xl font-bold text-center mb-4">Résumé</h3>
+
+        <p class="text-lg text-gray-700 leading-8 text-center">
+          Le narrateur décrit sa vie à Fès,
+          son école coranique et son attachement à sa boîte à merveilles.
+        </p>
+        <br>
+        <a href="cours.html"
+          class="bg-[#2A9D8F] hover:bg-[#d89000] transition text-white font-bold px-6 py-3 rounded-xl w-full shadow-lg">
+          Voir le cours
+        </a>
+      </div>
+
+      <!-- Personnages -->
+      <div id="personnages" class="bg-white p-8 rounded-3xl shadow-xl hover:scale-105 transition duration-300">
+
+        <div class="text-6xl text-center mb-6">👨‍👩‍👦</div>
+
+        <h3 class="text-2xl font-bold text-center mb-4">Personnages</h3>
+
+        <ul class="text-lg text-gray-700 leading-9 list-disc list-inside">
+          <li>Sidi Mohammed</li>
+          <li>Lalla Zoubida</li>
+          <li>Le père</li>
+          <li>Le maître du Msid</li>
+        </ul>
+        <br>
+        <a href="personnage.html"
+          class="bg-[#0096C7] hover:bg-[#d89000] transition text-white font-bold px-6 py-3 rounded-xl w-full shadow-lg">
+          Video Explicative
+        </a>
+
+      </div>
+
+      <!-- Quiz -->
+      <div id="quiz" class="bg-white p-8 rounded-3xl shadow-xl hover:scale-105 transition duration-300">
+
+        <div class="text-6xl text-center mb-6">💡</div>
+
+        <h3 class="text-2xl font-bold text-center mb-4">Quiz Interactif</h3>
+
+        <p class="text-lg text-gray-700 leading-8 text-center mb-6">
+          Répondez aux questions pour tester vos connaissances.
+        </p>
+        <br><br><br>
+        <a href="Q&R.html"
+          class="bg-[#f4a300] hover:bg-[#d89000] transition text-white font-bold px-6 py-3 rounded-xl w-full shadow-lg">
+          Commencer le Quiz
+        </a>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Analyse -->
+  <section class="bg-[#1f4f99] text-white py-20 px-6 mt-10">
+
+    <div class="max-w-5xl mx-auto text-center">
+
+      <h2 class="text-4xl font-bold mb-8">
+        Analyse Littéraire
+      </h2>
+
+      <p class="text-xl leading-10 text-gray-100">
+        Le premier chapitre présente l’univers traditionnel de la médina de Fès.
+        Ahmed Sefrioui utilise un style autobiographique riche en descriptions.
+      </p>
+
+      <p class="text-xl leading-10 text-gray-100 mt-5">
+        Le thème dominant est l’enfance et l’imagination.
+        La boîte à merveilles représente un refuge symbolique pour le narrateur.
+      </p>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-[#163b74] text-white text-center py-8">
+    <p class="text-lg">
+      © 2026 - Site éducatif | Master- Pédagogie Innovante de l'Enseignement Primaire<br>
+      Créé par : -EL ATIKI AYYOUB | Zaid KHANNOUS | ENNABAOUI HANANE | OUFTIH RAJAE |
+    </p>
+  </footer>
+
+
+  <!-- JavaScript -->
+  <script>
+
+    function startQuiz() {
+
+      const questions = [
+        {
+          question: "Qui est le narrateur du roman ?",
+          answer: "Sidi Mohammed"
+        },
+        {
+          question: "Dans quelle ville se déroule l’histoire ?",
+          answer: "Fès"
+        },
+        {
+          question: "Quel est le nom de la mère du narrateur ?",
+          answer: "Lalla Zoubida"
+        }
+      ];
+
+      let score = 0;
+
+      questions.forEach((q) => {
+        const userAnswer = prompt(q.question);
+
+        if (userAnswer && userAnswer.toLowerCase() === q.answer.toLowerCase()) {
+          score++;
+        }
+      });
+
+      alert("Votre score est : " + score + "/" + questions.length);
+    }
+
+  </script>
+
+</body>
+
+</html>

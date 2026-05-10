@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>La Boîte à Merveilles - Chapitre 1</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes zoom {
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.1);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+  </style>
+
+</head>
+
+<body class="bg-[#f5efe6] font-sans text-[#1f3b73]">
+
+  <!-- Navbar -->
+  <header class="bg-[#1f4f99] text-white shadow-lg fixed top-0 left-0 w-full z-50">
+    <div class="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
+
+      <div class="flex items-center gap-3">
+        <div class="bg-yellow-400 p-2 rounded-xl text-2xl shadow-md">📚</div>
+        <h1 class="text-2xl font-bold">La Boîte à Merveilles</h1>
+      </div>
+
+      <nav class="hidden md:flex gap-8 text-lg font-medium">
+        <a href="index.html" class="hover:text-yellow-300 transition">Accueil</a>
+        <a href="cours.html" class="hover:text-yellow-300 transition">Cours</a>
+        <a href="Q&R.html" class="hover:text-yellow-300 transition">Q&R</a>
+        <a href="slide.html" class="hover:text-yellow-300 transition">Video</a>
+        <a href="chatbot.html" class="hover:text-yellow-300 transition">ChatBot</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <!-- PAGE QUESTIONS -->
+  <section class="max-w-6xl mx-auto px-6 py-20">
+
+    <div class="text-center mb-14">
+      <h2 class="text-5xl font-bold text-[#1f4f99] mb-4">
+        Questions & Réponses
+      </h2>
+
+      <p class="text-xl text-gray-700">
+        Révisez le chapitre 1 avec des questions interactives.
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-8">
+
+      <!-- Question 1 -->
+      <div
+        class="bg-white rounded-3xl shadow-xl p-8 hover:-translate-y-2 transition duration-300 border-l-8 border-[#1f4f99]">
+
+        <div class="text-5xl mb-5">❓</div>
+
+        <h3 class="text-2xl font-bold mb-4">
+          Qui est le narrateur du roman ?
+        </h3>
+
+        <button onclick="toggleAnswer('answer1')"
+          class="bg-[#1f4f99] hover:bg-[#163b74] text-white px-5 py-3 rounded-xl font-semibold transition shadow-md">
+          Voir la réponse
+        </button>
+
+        <div id="answer1" class="hidden mt-5 bg-[#eef4ff] p-5 rounded-2xl text-lg text-gray-700 leading-8">
+          Le narrateur du roman est <strong>Sidi Mohammed</strong>, un jeune enfant qui raconte ses souvenirs d’enfance.
+        </div>
+
+      </div>
+
+      <!-- Question 2 -->
+      <div
+        class="bg-white rounded-3xl shadow-xl p-8 hover:-translate-y-2 transition duration-300 border-l-8 border-yellow-500">
+
+        <div class="text-5xl mb-5">🏙️</div>
+
+        <h3 class="text-2xl font-bold mb-4">
+          Dans quelle ville se déroule l’histoire ?
+        </h3>
+
+        <button onclick="toggleAnswer('answer2')"
+          class="bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-3 rounded-xl font-semibold transition shadow-md">
+          Voir la réponse
+        </button>
+
+        <div id="answer2" class="hidden mt-5 bg-yellow-50 p-5 rounded-2xl text-lg text-gray-700 leading-8">
+          L’histoire se déroule dans la ville de <strong>Fès</strong>, au Maroc.
+        </div>
+
+      </div>
+
+      <!-- Question 3 -->
+      <div
+        class="bg-white rounded-3xl shadow-xl p-8 hover:-translate-y-2 transition duration-300 border-l-8 border-green-600">
+
+        <div class="text-5xl mb-5">👩</div>
+
+        <h3 class="text-2xl font-bold mb-4">
+          Quel est le nom de la mère du narrateur ?
+        </h3>
+
+        <button onclick="toggleAnswer('answer3')"
+          class="bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-xl font-semibold transition shadow-md">
+          Voir la réponse
+        </button>
+
+        <div id="answer3" class="hidden mt-5 bg-green-50 p-5 rounded-2xl text-lg text-gray-700 leading-8">
+          La mère du narrateur s’appelle <strong>Lalla Zoubida</strong>.
+        </div>
+
+      </div>
+
+      <!-- Question 4 -->
+      <div
+        class="bg-white rounded-3xl shadow-xl p-8 hover:-translate-y-2 transition duration-300 border-l-8 border-red-500">
+
+        <div class="text-5xl mb-5">📦</div>
+
+        <h3 class="text-2xl font-bold mb-4">
+          Que représente la boîte à merveilles ?
+        </h3>
+
+        <button onclick="toggleAnswer('answer4')"
+          class="bg-red-500 hover:bg-red-600 text-white px-5 py-3 rounded-xl font-semibold transition shadow-md">
+          Voir la réponse
+        </button>
+
+        <div id="answer4" class="hidden mt-5 bg-red-50 p-5 rounded-2xl text-lg text-gray-700 leading-8">
+          La boîte à merveilles représente un refuge imaginaire et affectif pour le jeune narrateur.
+        </div>
+      </div>
+
+        <!-- Question 5 -->
+      <div
+        class="bg-white rounded-3xl shadow-xl p-8 hover:-translate-y-2 transition duration-300 border-l-8 border-sky-600">
+
+        <div class="text-5xl mb-5">❓</div>
+
+        <h3 class="text-2xl font-bold mb-4">
+          La Boîte à merveilles» est une oeuvre écrite en ... et paru en ...?
+        </h3>
+
+        <button onclick="toggleAnswer('answer5')"
+          class="bg-sky-600 hover:bg-sky-700 text-white px-5 py-3 rounded-xl font-semibold transition shadow-md">
+          Voir la réponse
+        </button>
+
+        <div id="answer5" class="hidden mt-5 bg-sky-50 p-5 rounded-2xl text-lg text-gray-700 leading-8">
+            La Boîte à merveilles» est une oeuvre écrite en <strong>1952 et paru en 1954</strong>.
+        </div>
+
+      </div>
+
+      <!-- Question 6 -->
+      <div
+        class="bg-white rounded-3xl shadow-xl p-8 hover:-translate-y-2 transition duration-300 border-l-8 border-cyan-500">
+
+        <div class="text-5xl mb-5">❓</div>
+
+        <h3 class="text-2xl font-bold mb-4">
+          le personnage principal caractérisé par :
+        </h3>
+
+        <button onclick="toggleAnswer('answer6')"
+          class="bg-cyan-500 hover:bg-cyan-600 text-white px-5 py-3 rounded-xl font-semibold transition shadow-md">
+          Voir la réponse
+        </button>
+
+        <div id="answer6" class="hidden mt-5 bg-cyan-50 p-5 rounded-2xl text-lg text-gray-700 leading-8">
+          le personnage principal caractérisé par <strong>la solitude</strong>.
+        </div>
+
+      </div>
+
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-[#163b74] text-white text-center py-8">
+    <p class="text-lg">
+      © 2026 - Site éducatif | Master- Pédagogie Innovante de l'Enseignement Primaire<br>
+      Créé par : -EL ATIKI AYYOUB | Zaid KHANNOUS | ENNABAOUI HANANE | OUFTIH RAJAE |
+    </p>
+  </footer>
+
+
+  <script>
+
+    function toggleAnswer(id) {
+      const answer = document.getElementById(id);
+
+      answer.classList.toggle('hidden');
+    }
+
+  </script>
+
+</body>
+
+</html>

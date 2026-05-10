@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat - La Boîte à Merveilles</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+<body class="bg-[#f5efe6] font-sans">
+
+  <!-- Navbar -->
+  <header class="bg-[#1f4f99] text-white shadow-lg fixed top-0 left-0 w-full z-50">
+    <div class="max-w-7xl mx-auto flex justify-between items-center px-6 py-2">
+
+      <div class="flex items-center gap-3">
+        <div class="bg-white p-2 rounded-xl text-2xl shadow-md"><img src="images/logo 1.png" alt="logo" width="140px">
+        </div>
+        <h1 class="text-2xl font-bold"></h1>
+      </div>
+
+      <nav class="hidden md:flex gap-8 text-lg font-medium">
+        <a href="index.html" class="hover:text-yellow-300 transition">Accueil</a>
+        <a href="cours.html" class="hover:text-yellow-300 transition">Cours</a>
+        <a href="Q&R.html" class="hover:text-yellow-300 transition">Q&R</a>
+        <a href="slide.html" class="hover:text-yellow-300 transition">Video</a>
+        <a href="chatbot.html" class="hover:text-yellow-300 transition">ChatBot</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HEADER (نفس الموقع) -->
+  <!-- <div class="bg-[#1f4f99] text-white p-4 text-center text-xl font-bold shadow">
+    🤖 Assistant Educatif - La Boîte à Merveilles
+  </div> -->
+
+  <!-- CHAT -->
+  <div class="max-w-2xl mx-auto flex flex-col h-[90vh] mt-20">
+
+    <!-- MESSAGES -->
+    <div id="messages" class="flex-1 overflow-y-auto p-4 space-y-3">
+
+      <div class="bg-white p-3 rounded-2xl shadow w-fit">
+        🤖 Bonjour 👋<br>
+        Choisis un mode 👇
+      </div>
+
+    </div>
+
+    <!-- BUTTONS -->
+    <div id="buttons" class="p-3 flex flex-wrap gap-2 justify-center bg-white border-t">
+      <button onclick="startQCM()" class="bg-[#1f4f99] text-white px-4 py-2 rounded-xl">🎯 QCM</button>
+      <button onclick="startVF()" class="bg-[#2A9D8F] text-white px-4 py-2 rounded-xl">✔️ Vrai/Faux</button>
+      <button onclick="help()" class="bg-gray-400 text-white px-4 py-2 rounded-xl">❓ Aide</button>
+    </div>
+
+  </div>
+
+  <script>
+
+    /* ========= UI ========= */
+
+    function addBot(text) {
+      const box = document.getElementById("messages");
+      const div = document.createElement("div");
+      div.className = "bg-white p-3 rounded-2xl shadow w-fit";
+      div.innerHTML = "🤖 " + text;
+      box.appendChild(div);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function addUser(text) {
+      const box = document.getElementById("messages");
+      const div = document.createElement("div");
+      div.className = "bg-[#1f4f99] text-white p-3 rounded-2xl ml-auto w-fit";
+      div.innerHTML = "👤 " + text;
+      box.appendChild(div);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    /* ========= DATA ========= */
+
+    let mode = "";
+    let indexQ = 0;
+    let score = 0;
+
+    const questions = [
+
+      { q: "Qui est l’auteur ?", options: ["Molière", "Ahmed Sefrioui", "Victor Hugo"], a: 1, exp: "Ahmed Sefrioui est l’auteur." },
+      { q: "Qui est le narrateur ?", options: ["Sidi Mohammed", "Ali", "Zineb"], a: 0, exp: "Le narrateur est Sidi Mohammed." },
+      { q: "La ville ?", options: ["Casablanca", "Fès", "Rabat"], a: 1, exp: "L’histoire se déroule à Fès." },
+      { q: "Nom de la mère ?", options: ["Rahma", "Lalla Zoubida", "Fatma"], a: 1, exp: "Sa mère est Lalla Zoubida." },
+      { q: "Genre ?", options: ["Poème", "Roman autobiographique", "Théâtre"], a: 1, exp: "Roman autobiographique." },
+      { q: "Lieu ?", options: ["Dar Chouafa", "École", "Marché"], a: 0, exp: "Dar Chouafa." },
+      { q: "Âge ?", options: ["6 ans", "10 ans", "15 ans"], a: 0, exp: "Il a 6 ans." },
+      { q: "Type ?", options: ["Narratif descriptif", "Argumentatif", "Poétique"], a: 0, exp: "Narratif descriptif." },
+      { q: "Focalisation ?", options: ["Interne", "Externe", "Zéro"], a: 0, exp: "Interne." },
+      { q: "Thème ?", options: ["Amour", "Enfance", "Guerre"], a: 1, exp: "Enfance." },
+
+      /* أضفنا المزيد */
+      { q: "Dar Chouafa est ?", options: ["Maison", "École", "Mosquée"], a: 0, exp: "C’est une maison." },
+      { q: "La Chouafa est ?", options: ["Voyante", "Mère", "Amie"], a: 0, exp: "Une voyante." },
+      { q: "Rahma est ?", options: ["Voisine", "Sœur", "Prof"], a: 0, exp: "Une voisine." },
+      { q: "Zineb est ?", options: ["Amie", "Fille de Rahma", "Sœur"], a: 1, exp: "Fille de Rahma." },
+      { q: "Le texte est ?", options: ["Descriptif", "Narratif descriptif", "Argumentatif"], a: 1, exp: "Narratif descriptif." }
+
+    ];
+
+    const vf = [
+
+      { q: "Le texte est un roman.", a: true, exp: "Oui." },
+      { q: "Le narrateur est adulte.", a: false, exp: "Il est enfant." },
+      { q: "La Chouafa est une voyante.", a: true, exp: "Oui." },
+      { q: "Dar Chouafa est une école.", a: false, exp: "Maison." },
+      { q: "Le texte parle de la guerre.", a: false, exp: "Enfance." }
+
+    ];
+
+    /* ========= QCM ========= */
+
+    function startQCM() {
+      mode = "qcm"; indexQ = 0; score = 0;
+      addBot("🎯 QCM Ça a commencé !");
+      showQ();
+    }
+
+    function showQ() {
+      let q = questions[indexQ];
+      addBot("❓ " + q.q);
+
+      const btns = document.getElementById("buttons");
+      btns.innerHTML = "";
+
+      q.options.forEach((opt, i) => {
+        let b = document.createElement("button");
+        b.className = "bg-[#1f4f99] text-white px-4 py-2 rounded-xl";
+        b.innerText = opt;
+        b.onclick = () => answerQ(i);
+        btns.appendChild(b);
+      });
+    }
+
+    function answerQ(i) {
+      let q = questions[indexQ];
+      addUser(q.options[i]);
+
+      if (i === q.a) {
+        score++;
+        addBot("✅ " + q.exp);
+      } else {
+        addBot("❌ " + q.exp);
+      }
+
+      indexQ++;
+
+      if (indexQ < questions.length) {
+        showQ();
+      } else {
+        addBot("🏆 Score: " + score + "/" + questions.length);
+        resetButtons();
+      }
+    }
+
+    /* ========= VF ========= */
+
+    function startVF() {
+      mode = "vf"; indexQ = 0; score = 0;
+      addBot("✔️ Vrai/Faux !");
+      showVF();
+    }
+
+    function showVF() {
+      addBot(vf[indexQ].q);
+
+      const btns = document.getElementById("buttons");
+      btns.innerHTML = "";
+
+      ["Vrai", "Faux"].forEach(val => {
+        let b = document.createElement("button");
+        b.className = "bg-[#2A9D8F] text-white px-4 py-2 rounded-xl";
+        b.innerText = val;
+        b.onclick = () => answerVF(val);
+        btns.appendChild(b);
+      });
+    }
+
+    function answerVF(val) {
+      let q = vf[indexQ];
+      addUser(val);
+
+      let correct = (val === "Vrai");
+
+      if (correct === q.a) {
+        score++;
+        addBot("✅ " + q.exp);
+      } else {
+        addBot("❌ " + q.exp);
+      }
+
+      indexQ++;
+
+      if (indexQ < vf.length) {
+        showVF();
+      } else {
+        addBot("🏆 Score: " + score + "/" + vf.length);
+        resetButtons();
+      }
+    }
+
+    /* ========= RESET ========= */
+
+    function resetButtons() {
+      const btns = document.getElementById("buttons");
+      btns.innerHTML = `
+    <button onclick="startQCM()" class="bg-[#1f4f99] text-white px-4 py-2 rounded-xl">🎯 QCM</button>
+    <button onclick="startVF()" class="bg-[#2A9D8F] text-white px-4 py-2 rounded-xl">✔️ Vrai/Faux</button>
+    <button onclick="help()" class="bg-gray-400 text-white px-4 py-2 rounded-xl">❓ Aide</button>
+  `;
+    }
+
+    function help() {
+      addBot("اختر QCM أو Vrai/Faux للبدء 🎮");
+    }
+
+  </script>
+
+</body>
+
+</html>
